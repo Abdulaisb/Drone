@@ -67,17 +67,41 @@ def fertilization(start_lat, start_lon, alt, width, height, crosses):
     points.append(f"{crosses*4+3}\t{land}{start_lat:.8f}\t{start_lon:.8f}\t0.000000\t1")
     
     return points
+def circular_pattern(start_lat, start_lon, alt, radius, passes, waypoints_per_pass):
+    constant = "0\t3\t16\t0.00000000\t0.00000000\t0.00000000\t0.00000000\t"
+    points = []
+    points.append("1\t" + constant + "{:.8f}\t{:.8f}\t-1.000000\t1".format(start_lat, start_lon))
+
+    waypoint_id = 2  # start from ID 2 as 1 is the home point
+    for p in range(passes):
+        current_radius = radius * (p + 1) / passes  # incremental radius
+        for w in range(waypoints_per_pass):
+            angle = (2 * math.pi / waypoints_per_pass) * w  # divide the circle evenly
+            d_north = current_radius * math.cos(angle)
+            d_east = current_radius * math.sin(angle)
+            lat, lon = m_to_lat(start_lat, start_lon, d_north, d_east)
+            points.append("{}\t{}{:.8f}\t{:.8f}\t{:.6f}\t1".format(waypoint_id, constant, lat, lon, alt))
+            waypoint_id += 1  # increment waypoint ID for each new point
+
+    return points
 
 # Write waypoints to output file
-output = open("output.waypoints", "w")
+output = open("s.waypoints", "w")
 output.write("QGC WPL 110\n")
 output.write("0\t1\t0\t0\t0\t0\t0\t0\t0\t0\t0\t1\n")
 # Veteran's Field Coordinates
 start_latitude = 30.6427363
 start_longitude = -96.3001643
-altitude = 15
-# Courier Mission
-waypoints = courier(start_latitude, start_longitude, altitude, 15, 10)
+altitude = 110
+#Mission selection
+option = 3
+#Mission generation
+if option == 1: # Courier Mission
+    waypoints = courier(start_latitude,start_longitude,altitude,10,8)   
+if option == 2: # Fertilization Mission (70,100 for the soccer field)
+    waypoints = fertilization(start_latitude,start_longitude, altitude, 20, 50, 2)
+if option == 3: # Security Mission
+    waypoints = circular_pattern(start_latitude, start_longitude, altitude, 5, 2, 12)
 
 for w in waypoints:
     output.write(w + "\n")
