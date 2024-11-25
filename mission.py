@@ -70,7 +70,7 @@ def fertilization(start_lat, start_lon, alt, width, height, crosses):
 def circular_pattern(start_lat, start_lon, alt, radius, passes, waypoints_per_pass):
     constant = "0\t3\t16\t0.00000000\t0.00000000\t0.00000000\t0.00000000\t"
     points = []
-    points.append("1\t" + constant + "{:.8f}\t{:.8f}\t-1.000000\t1".format(start_lat, start_lon))
+    points.append("1\t" + constant + "{:.8f}\t{:.8f}\t110.000000\t1".format(start_lat, start_lon))
 
     waypoint_id = 2  # start from ID 2 as 1 is the home point
     for p in range(passes):
@@ -99,9 +99,9 @@ option = 3
 if option == 1: # Courier Mission
     waypoints = courier(start_latitude,start_longitude,altitude,10,8)   
 if option == 2: # Fertilization Mission (70,100 for the soccer field)
-    waypoints = fertilization(start_latitude,start_longitude, altitude, 20, 50, 2)
+    waypoints = fertilization(start_latitude,start_longitude, altitude, 70, 100, 8)
 if option == 3: # Security Mission
-    waypoints = circular_pattern(start_latitude, start_longitude, altitude, 5, 2, 12)
+    waypoints = circular_pattern(start_latitude, start_longitude, altitude, 15, 4, 12)
 
 for w in waypoints:
     output.write(w + "\n")
